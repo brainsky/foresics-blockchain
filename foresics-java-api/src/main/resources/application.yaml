@@ -1,0 +1,29 @@
+spring:
+  profiles: dev
+server:
+  name: foresics-java-api
+  port: 9000
+  
+fabric:
+  networkFile: "network-connection.yaml"
+  proposalWaitTime: 6000
+  transactionWaitTime: 3000
+  sslProvider: "openSSL"
+  negotiationType: "TLS"
+  chaincode:
+    chaincodeVersion: "1.0"
+    chaincodePath: "chaincode"
+    endorsementPlocyFile: "endorsement-plocy-file.yaml"
+
+logging:
+  file: logs/application-debug.log
+  
+
+---
+spring:
+  profiles: test
+server:
+  name: foresics-java-api-test
+  port: 9001
+hyperledger:
+  
