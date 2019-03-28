@@ -1,8 +1,11 @@
 package com.cpsec.entity;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.util.Set;
 
@@ -16,11 +19,18 @@ import com.cpsec.util.FabricStore;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
 
+/**
+ * 
+ * @author Administrator
+ *
+ */
 
-
-public class FabricUser implements User{
+public class FabricUser implements User, Serializable{
 	
-    private transient CryptoSuite cryptoSuite;
+ 
+	private static final long serialVersionUID = -8822655016313223171L;
+	
+	private transient CryptoSuite cryptoSuite;
 	private String name;
     private String mspId;
     private String keyValStoreName;
@@ -29,7 +39,7 @@ public class FabricUser implements User{
     
     private String enrollmentSecret;
     private String orgName;
-    
+    private String affiliation;
     private transient FabricStore keyValStore;
      
     
@@ -39,7 +49,23 @@ public class FabricUser implements User{
     	setEnrollment(getMockEnrollment(MOCK_CERT));
     }
     
-    public void setEnrollment(Enrollment e) {
+    public FabricUser(String name, String orgName, FabricStore store, CryptoSuite crypto){
+    	
+    	this.name = name;
+    	this.orgName = orgName;
+    	this.cryptoSuite = crypto;
+    	this.keyValStoreName = toKeyValStoreName(name, orgName);
+    	
+    	//获取用户证书
+    	String memberStr =  keyValStore.getValue(keyValStoreName);
+    	if(null == memberStr){
+    		saveState();
+    	}else{
+    		restoreState();
+    	}
+    }
+   
+	public void setEnrollment(Enrollment e) {
         this.enrollment = e;
         saveState();
     }
@@ -95,7 +121,7 @@ public class FabricUser implements User{
 	/**
      * Save the state of this user to the key value store.
      */
-    void saveState() {
+    private void saveState() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -108,8 +134,42 @@ public class FabricUser implements User{
         }
     }
     
+    private FabricUser restoreState() {
+    	String memberStr = keyValStore.getValue(keyValStoreName);
+    	if (null != memberStr) {
+    		 byte[] serialized = Hex.decode(memberStr);
+             ByteArrayInputStream bis = new ByteArrayInputStream(serialized);
+             try {
+            	 
+				ObjectInputStream ois = new ObjectInputStream(bis);
+				FabricUser 	state = (FabricUser)ois.readObject();
+				 if (state != null) {
+					 this.name = state.name;
+					 this.orgName = state.orgName;
+					 this.cryptoSuite = state.cryptoSuite;
+					 this.enrollment = state.enrollment;
+					 this.enrollmentSecret = state.enrollmentSecret;
+					 this.mspId = state.mspId;
+					 this.affiliation = state.affiliation;
+					 return this;
+				 }
+			} catch (IOException e) {
+				throw new RuntimeException(String.format("Could not restore state of member %s", this.name), e);
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException(String.format("Cound serialize Object, the keyValStoreName is %s", keyValStoreName));
+			}   
+    	}
+    	return null;
+	}
+
     
+    public static String toKeyValStoreName(String name, String org) {
+        return "user." + name + org;
+    }
 	
+    public static boolean isStored(String name, String org, FabricStore store){
+    	return store.hasValue(toKeyValStoreName(name, org));
+    }
 	
 	public static Enrollment getMockEnrollment(String cert) {
 	        return new X509Enrollment(new MockPrivateKey(), cert);

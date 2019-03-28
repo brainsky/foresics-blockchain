@@ -19,7 +19,7 @@ public class FabricParamsConfig {
 	
 	private Chaincode chaincode;
 	
-	private class Chaincode{
+	public class Chaincode{
 		
 		private String chaincodeVersion;
 		

@@ -11,6 +11,7 @@ package com.cpsec.help;
 import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.hyperledger.fabric.sdk.Channel;
 import org.hyperledger.fabric.sdk.HFClient;
+import org.hyperledger.fabric.sdk.NetworkConfig;
 
 
 public interface ConfigHelper {
@@ -39,5 +40,11 @@ public interface ConfigHelper {
 	 * @return 链码ID
 	 */
 	ChaincodeID getChaincodeID(String ccName, String ccPath, String ccVersion);
+	
+	/**
+	 * 获取网络配置
+	 * @return 网络配置
+	 */
+	NetworkConfig getNetworkConfig();
 	
 }

@@ -18,6 +18,7 @@ import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cpsec.service.UserService;
 import com.cpsec.util.GlobalManager;
 import com.cpsec.util.UserManager;
 
@@ -34,17 +35,16 @@ public class ConfigHelperBase implements ConfigHelper {
 	
 	private static Map<String, String> clientKey;
 	
-	
-	private UserManager userManager;
+	private final UserService userService;
 	
 	static{
 		bootstrap();
 	}
 	
 	@Autowired
-	public ConfigHelperBase(FabricParamsConfig paramsConfig, UserManager manager) {
+	public ConfigHelperBase(FabricParamsConfig paramsConfig, UserService userService) {
 		this.paramsConfig = paramsConfig;
-		this.userManager = userManager;
+		this.userService = userService;
 	}
 	
 
@@ -53,11 +53,11 @@ public class ConfigHelperBase implements ConfigHelper {
 		HFClient client = HFClient.createNewInstance();
 		client.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
 		User user = null;
-		if(userName.equals(GlobalManager.UserType.Admin)){
+		if("admin".equals(userName)){
 			//获取节点管理员证书
-			user = userManager.getUserByOrg(orgName, "admin");
+			user = userService.getMemberUser(userName, orgName, "admin");
 		}else{
-			user = userManager.getUserByOrg(orgName, userName);
+			user = userService.getMemberUser(userName, orgName, "public");
 		}
 		client.setUserContext(user);
 		return client;
@@ -137,6 +137,10 @@ public class ConfigHelperBase implements ConfigHelper {
 	public static String getClientKeyByName(String domainName){
 		//TODO 
 		return "";
+	}
+	
+	public NetworkConfig getNetworkConfig(){
+		return this.networkConfig;
 	}
 	
 	

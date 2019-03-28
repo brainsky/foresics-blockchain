@@ -61,19 +61,42 @@ public class FabricStore {
 	 public void setValue(String name, String value) {
 	        Properties properties = loadProperties();
 	        try (
-	                OutputStream output = new FileOutputStream(file)
+	            OutputStream output = new FileOutputStream(file)
 	        ) {
 	            properties.setProperty(name, value);
 	            properties.store(output, "");
 	            output.close();
-
 	        } catch (IOException e) {
 	            logger.warn(String.format("Could not save the keyvalue store, reason:%s", e.getMessage()));
 	        }
 	 }
 	 
 	 
+	 /**
+     * Has the value present.
+     *
+     * @param name
+     * @return true if it's present.
+     */
+    public boolean hasValue(String name) {
+        Properties properties = loadProperties();
+        return properties.containsKey(name);
+    }
+	 
 	 public FabricUser getMember(String name, String org) {
-		 return null;
+		 FabricUser user = members.get(FabricUser.toKeyValStoreName(name, org));
+		 if(null != user){
+			 return user;
+		 }
+		 user = new FabricUser(name, org, this, cryptoSuite);
+		 return user;
+	 }
+	 
+	 public boolean hasMember(String name, String org) {
+		 
+		 if(members.containsKey(FabricUser.toKeyValStoreName(name, org))){
+			 return true;
+		 }
+		 return FabricUser.isStored(name, org, this);
 	 }
 }

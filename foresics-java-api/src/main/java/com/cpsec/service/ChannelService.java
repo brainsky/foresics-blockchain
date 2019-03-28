@@ -33,8 +33,8 @@ public interface ChannelService {
 	 * @param ccVersion
 	 * @return
 	 */
-	ChaincodeID deployChaincode(OrganizationVO org, String chaincodeID, String ccName, 
-						String ccPath, String ccVersion) throws Exception;
+	ChaincodeID deployChaincode(OrganizationVO org, String ccName, 
+						String ccPath, String ccVersion, String fcnName) throws Exception;
 	
 	
 	/**
@@ -44,7 +44,7 @@ public interface ChannelService {
 	 * @param orgName
 	 * @return
 	 */
-	Channel createChannel(OrganizationVO org, String txPath);
+	Channel createChannel(OrganizationVO org, String txPath) throws Exception;
 	
 	/**
 	 * 查询区块链信息
@@ -53,7 +53,7 @@ public interface ChannelService {
 	 * @param channelName
 	 * @return BlockchainInfo
 	 */
-	BlockchainInfo queryBlockChainInfo(OrganizationVO org);
+	BlockchainInfo queryBlockChainInfo(OrganizationVO org) throws Exception;
 	
 	/**
 	 * 根据区块hash查询区块
@@ -63,7 +63,7 @@ public interface ChannelService {
 	 * @param hash 区块哈希
 	 * @return 区块信息
 	 */
-	BlockInfo queryBlockByHash(OrganizationVO org, String hash);
+	BlockInfo queryBlockByHash(OrganizationVO org, String hash) throws Exception;
 	
 	/**
 	 * 根据区块高度查询区块
@@ -72,7 +72,7 @@ public interface ChannelService {
 	 * @param blockNo 区块高度
 	 * @return 区块
 	 */
-	BlockInfo queryBlockByNO(OrganizationVO org, String blockNo);
+	BlockInfo queryBlockByNO(OrganizationVO org, String blockNo) throws Exception;
 	
 	/**
 	 * 分页查询区块信息
@@ -83,7 +83,7 @@ public interface ChannelService {
 	 * @param page  区块集合大小
 	 * @return 区块列表
 	 */
-	List<BlockInfo> queryBlockList(OrganizationVO org, String index, String page);
+	List<BlockInfo> queryBlockList(OrganizationVO org, String index, String page) throws Exception;
 	
 	
 	/**

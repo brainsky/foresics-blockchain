@@ -16,6 +16,40 @@ public class OrganizationVO {
 	
 	// 用户名称
 	String userName;
+	
+	// 链码名称
+	String ccName;
+	
+	// 链码路径
+	String ccPath;
+	
+	// 链码名称
+	String ccVersion;
+	
+    public String getCcPath() {
+		return ccPath;
+	}
+
+	public void setCcPath(String ccPath) {
+		this.ccPath = ccPath;
+	}
+
+	public String getCcVersion() {
+		return ccVersion;
+	}
+
+	public void setCcVersion(String ccVersion) {
+		this.ccVersion = ccVersion;
+	}
+
+	
+	public String getCcName() {
+		return ccName;
+	}
+
+	public void setCcName(String ccName) {
+		this.ccName = ccName;
+	}
 
 	public String getOrgName() {
 		return orgName;
