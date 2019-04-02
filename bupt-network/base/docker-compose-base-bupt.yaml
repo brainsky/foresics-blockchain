@@ -9,7 +9,7 @@ services:
 
   orderer.bupt.com:
     container_name: orderer.bupt.com
-    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    image: hyperledger/fabric-orderer
     environment:
       - ORDERER_GENERAL_LOGLEVEL=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
